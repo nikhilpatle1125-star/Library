@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Library Management</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; max-width: 700px; }
+    h1 { text-align: center; }
+    .menu { margin-bottom: 20px; }
+    button { margin: 5px; padding: 10px; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { opacity: 0.9; }
+    .book-btn { background: #4CAF50; color: white; }
+    .mag-btn { background: #2196F3; color: white; }
+    .disp-btn { background: #9C27B0; color: white; }
+    .search-btn { background: #FF9800; color: white; }
+    .borrow-btn { background: #795548; color: white; }
+    .return-btn { background: #607D8B; color: white; }
+    .output { margin-top: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+    .available { color: green; }
+    .borrowed { color: red; }
+  </style>
+</head>
+<body>
+
+  <h1>📚 Library Management</h1>
+
+  <div class="menu">
+    <button class="book-btn" onclick="addItem('Book')">Add Book</button>
+    <button class="mag-btn" onclick="addItem('Magazine')">Add Magazine</button>
+    <button class="disp-btn" onclick="displayItems()">Display All Items</button>
+    <button class="search-btn" onclick="searchItem()">Search by Title</button>
+    <button class="borrow-btn" onclick="borrowItem()">Borrow Item</button>
+    <button class="return-btn" onclick="returnItem()">Return Item</button>
+  </div>
+
+  <div id="output" class="output">Library is empty.</div>
+
+  <script>
+    class LibraryItem {
+      constructor(id, title, price, type) {
+        this.id = id;
+        this.title = title;
+        this.price = price;
+        this.type = type;
+        this.isBorrowed = false;
+      }
+
+      details() {
+        return `${this.type} ID: ${this.id}, Title: ${this.title}, Price: ₹${this.price}, 
+                Status: <span class="${this.isBorrowed ? 'borrowed' : 'available'}">
+                ${this.isBorrowed ? 'Borrowed' : 'Available'}</span>`;
+      }
+    }
+
+    const items = [];
+
+    function addItem(type) {
+      const id = prompt(`Enter ${type} ID:`);
+      const title = prompt(`Enter ${type} Title:`);
+      const price = prompt(`Enter ${type} Price:`);
+
+      if (id && title && price) {
+        items.push(new LibraryItem(id, title, price, type));
+        document.getElementById("output").innerHTML = `${type} added successfully!`;
+      }
+    }
+
+    function displayItems() {
+      if (items.length === 0) {
+        document.getElementById("output").innerHTML = "No items in library.";
+      } else {
+        let result = "<h3>Library Inventory:</h3>";
+        items.forEach(item => {
+          result += item.details() + "<br>";
+        });
+        document.getElementById("output").innerHTML = result;
+      }
+    }
+
+    function searchItem() {
+      const search = prompt("Enter title to search:").toLowerCase();
+      let result = "";
+      items.forEach(item => {
+        if (item.title.toLowerCase().includes(search)) {
+          result += item.details() + "<br>";
+        }
+      });
+      document.getElementById("output").innerHTML = result || "No item found.";
+    }
+
+    function borrowItem() {
+      const id = prompt("Enter Item ID to borrow:");
+      const item = items.find(i => i.id === id);
+      if (item) {
+        if (!item.isBorrowed) {
+          item.isBorrowed = true;
+          document.getElementById("output").innerHTML = `${item.title} has been borrowed.`;
+        } else {
+          document.getElementById("output").innerHTML = `${item.title} is already borrowed.`;
+        }
+      } else {
+        document.getElementById("output").innerHTML = "Item not found.";
+      }
+    }
+
+    function returnItem() {
+      const id = prompt("Enter Item ID to return:");
+      const item = items.find(i => i.id === id);
+      if (item) {
+        if (item.isBorrowed) {
+          item.isBorrowed = false;
+          document.getElementById("output").innerHTML = `${item.title} has been returned.`;
+        } else {
+          document.getElementById("output").innerHTML = `${item.title} was not borrowed.`;
+        }
+      } else {
+        document.getElementById("output").innerHTML = "Item not found.";
+      }
+    }
+  </script>
+
+</body>
+</html>
